@@ -2,6 +2,7 @@ export const eventConfig = Object.freeze({
   title: "UIT Data & Web Meetup",
   startsAtUtc: "2026-12-20T02:00:00Z",
   timeZone: "Asia/Ho_Chi_Minh",
+  timeZoneLabel: "Giờ Việt Nam (UTC+7)",
   description:
     "Một buổi gặp gỡ chia sẻ ý tưởng về dữ liệu và phát triển web dành cho cộng đồng sinh viên UIT.",
   venue: "Hội trường E, Trường Đại học Công nghệ Thông tin",
