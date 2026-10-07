@@ -50,6 +50,8 @@ test("the page has semantic Vietnamese structure and visible required controls",
   const emailInput = html.match(/<input\b[^>]*id="email"[^>]*>/s)?.[0] ?? "";
   assert.match(emailInput, /type="email"/);
   assert.match(emailInput, /\brequired\b/);
+  const submitButton = html.match(/<button\b[^>]*id="submit-button"[^>]*>/s)?.[0] ?? "";
+  assert.match(submitButton, /\bdisabled\b/);
   assert.match(html, /role="status" aria-live="polite"/);
   assert.equal((html.match(/aria-live="polite"/g) ?? []).length, 2);
   assert.doesNotMatch(html, /\son[a-z]+\s*=/i);
