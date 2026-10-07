@@ -18,6 +18,7 @@ bindRegistrationForm({
   submitButton: document.querySelector("#submit-button"),
   submitLabel: document.querySelector("[data-submit-label]"),
   status: document.querySelector("#registration-status"),
+  nameInput: document.querySelector("#full-name"),
   submit: submitRegistration,
 });
 

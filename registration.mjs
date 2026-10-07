@@ -20,6 +20,19 @@ const STATE_MESSAGES = Object.freeze({
 });
 
 export const MOCK_SUBMISSION_DELAY_MS = 800;
+export const NAME_REQUIRED_MESSAGE = "Vui lòng nhập họ và tên.";
+
+export function validateRegistrationName(value) {
+  return String(value ?? "").trim() ? "" : NAME_REQUIRED_MESSAGE;
+}
+
+export function normalizeRegistrationPayload(fields) {
+  return Object.freeze({
+    name: String(fields.name ?? "").trim(),
+    email: String(fields.email ?? "").trim(),
+    message: String(fields.message ?? "").trim(),
+  });
+}
 
 export function transitionRegistrationState(currentState, nextState) {
   if (!REGISTRATION_STATES.includes(currentState) || !NEXT_STATES[currentState].includes(nextState)) {
@@ -51,7 +64,7 @@ export const submitRegistration = createSimulatedRegistrationService();
 
 function readFormPayload(form) {
   const formData = new FormData(form);
-  return Object.freeze({
+  return normalizeRegistrationPayload({
     name: formData.get("name"),
     email: formData.get("email"),
     message: formData.get("message"),
@@ -70,6 +83,7 @@ export function bindRegistrationForm({
   submitButton,
   submitLabel,
   status,
+  nameInput = form.elements?.namedItem?.("name"),
   submit = submitRegistration,
   readPayload = readFormPayload,
 } = {}) {
@@ -95,14 +109,46 @@ export function bindRegistrationForm({
     status.textContent = STATE_MESSAGES[state];
   };
 
-  async function handleSubmit(event) {
+  form.setAttribute("aria-busy", "false");
+  submitButton.disabled = false;
+  submitLabel.textContent = "Gửi đăng ký";
+  status.dataset.state = "idle";
+  status.textContent = STATE_MESSAGES.idle;
+
+  const syncNameValidity = () => {
+    if (nameInput && typeof nameInput.setCustomValidity === "function") {
+      nameInput.setCustomValidity(validateRegistrationName(nameInput.value));
+    }
+  };
+  const clearNameValidity = () => {
+    if (nameInput && typeof nameInput.setCustomValidity === "function") {
+      nameInput.setCustomValidity("");
+    }
+  };
+
+  syncNameValidity();
+  nameInput?.addEventListener("input", syncNameValidity);
+  nameInput?.addEventListener("change", syncNameValidity);
+  form.addEventListener("reset", clearNameValidity);
+
+  async function guardedSubmit(event) {
     event.preventDefault();
     if (state === "submitting") return;
 
-    const payload = readPayload(form);
+    syncNameValidity();
+    if (typeof form.checkValidity === "function" && !form.checkValidity()) {
+      form.reportValidity?.();
+      return;
+    }
+
+    return handleSubmit();
+  }
+
+  async function handleSubmit() {
     renderState("submitting");
 
     try {
+      const payload = readPayload(form);
       await submit(payload);
       form.reset();
       renderState("success");
@@ -111,15 +157,15 @@ export function bindRegistrationForm({
     }
   }
 
-  form.setAttribute("aria-busy", "false");
-  submitButton.disabled = false;
-  submitLabel.textContent = "Gửi đăng ký";
-  status.dataset.state = "idle";
-  status.textContent = STATE_MESSAGES.idle;
-  form.addEventListener("submit", handleSubmit);
+  form.addEventListener("submit", guardedSubmit);
 
   return Object.freeze({
     getState: () => state,
-    dispose: () => form.removeEventListener("submit", handleSubmit),
+    dispose: () => {
+      form.removeEventListener("submit", guardedSubmit);
+      form.removeEventListener("reset", clearNameValidity);
+      nameInput?.removeEventListener("input", syncNameValidity);
+      nameInput?.removeEventListener("change", syncNameValidity);
+    },
   });
 }

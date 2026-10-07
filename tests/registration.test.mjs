@@ -4,14 +4,40 @@ import {
   bindRegistrationForm,
   createSimulatedRegistrationService,
   MOCK_SUBMISSION_DELAY_MS,
+  normalizeRegistrationPayload,
   transitionRegistrationState,
+  validateRegistrationName,
 } from "../registration.mjs";
 
 function makeFormEnvironment() {
   const formListeners = new Map();
   const attributes = new Map();
+  const nameListeners = new Map();
+  let validityReports = 0;
+  const nameInput = {
+    value: "Lan Nguyen",
+    customValidity: "",
+    setCustomValidity(message) {
+      this.customValidity = message;
+    },
+    addEventListener(type, callback) {
+      nameListeners.set(type, callback);
+    },
+    removeEventListener(type, callback) {
+      if (nameListeners.get(type) === callback) nameListeners.delete(type);
+    },
+    input(value) {
+      this.value = value;
+      nameListeners.get("input")?.({ target: this });
+    },
+  };
   const form = {
     resetCount: 0,
+    elements: {
+      namedItem(name) {
+        return name === "name" ? nameInput : null;
+      },
+    },
     addEventListener(type, callback) {
       formListeners.set(type, callback);
     },
@@ -23,8 +49,21 @@ function makeFormEnvironment() {
     },
     reset() {
       this.resetCount += 1;
+      formListeners.get("reset")?.({ type: "reset", target: this });
+      nameInput.value = "";
+    },
+    checkValidity() {
+      return nameInput.value.length > 0 && nameInput.customValidity === "" && this.emailValid !== false;
+    },
+    reportValidity() {
+      validityReports += 1;
+      return false;
     },
     submit() {
+      if (!this.checkValidity()) {
+        this.reportValidity();
+        return { defaultPrevented: false, result: Promise.resolve() };
+      }
       const listener = formListeners.get("submit");
       let defaultPrevented = false;
       const result = listener({
@@ -50,7 +89,19 @@ function makeFormEnvironment() {
       readPayload: () => payload,
     });
 
-  return { attributes, controller, form, payload, status, submitButton, submitLabel };
+  return {
+    attributes,
+    controller,
+    form,
+    nameInput,
+    payload,
+    get validityReports() {
+      return validityReports;
+    },
+    status,
+    submitButton,
+    submitLabel,
+  };
 }
 
 test("allows only the defined registration state transitions", () => {
@@ -60,6 +111,38 @@ test("allows only the defined registration state transitions", () => {
   assert.equal(transitionRegistrationState("success", "submitting"), "submitting");
   assert.equal(transitionRegistrationState("error", "submitting"), "submitting");
   assert.throws(() => transitionRegistrationState("idle", "success"), /Invalid registration/);
+});
+
+test("normalizes outer whitespace and rejects names made only of whitespace", () => {
+  assert.deepEqual(
+    normalizeRegistrationPayload({
+      name: "  Lan Nguyen  ",
+      email: " lan@example.test ",
+      message: "  Xin chào  ",
+    }),
+    { name: "Lan Nguyen", email: "lan@example.test", message: "Xin chào" },
+  );
+  assert.equal(validateRegistrationName("   \t "), "Vui lòng nhập họ và tên.");
+  assert.equal(validateRegistrationName(" Lan "), "");
+});
+
+test("whitespace-only names fail custom validity before calling the service", () => {
+  const environment = makeFormEnvironment();
+  let calls = 0;
+  const controller = environment.controller(async () => {
+    calls += 1;
+    return { accepted: true };
+  });
+
+  environment.nameInput.input(" \t  ");
+  const event = environment.form.submit();
+
+  assert.equal(event.defaultPrevented, false);
+  assert.equal(environment.nameInput.customValidity, "Vui lòng nhập họ và tên.");
+  assert.equal(environment.validityReports, 1);
+  assert.equal(calls, 0);
+  assert.equal(controller.getState(), "idle");
+  assert.equal(environment.attributes.get("aria-busy"), "false");
 });
 
 test("successful simulated submission resets the form and keeps the success message", async () => {
