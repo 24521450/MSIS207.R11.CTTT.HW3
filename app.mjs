@@ -1,14 +1,17 @@
 import { eventConfig } from "./event-config.mjs";
+import { parseUtcDeadline } from "./countdown.mjs";
 import { renderEventDetails, startCountdown } from "./event-ui.mjs";
 import { bindRegistrationForm, submitRegistration } from "./registration.mjs";
 
-renderEventDetails(eventConfig);
+const parsedDeadline = parseUtcDeadline(eventConfig.startsAtUtc);
+renderEventDetails(eventConfig, { parsedDeadline });
 
 const countdownRoot = document.querySelector(".countdown-panel");
 const launchCountdown = () =>
   startCountdown({
     root: countdownRoot,
     deadline: eventConfig.startsAtUtc,
+    parsedDeadline,
   });
 
 let disposeCountdown = launchCountdown();

@@ -25,6 +25,7 @@ function writeCountdownParts(elements, parts) {
 export function startCountdown({
   root,
   deadline,
+  parsedDeadline: providedParsedDeadline,
   now = () => Date.now(),
   timers = globalThis,
   documentRef = globalThis.document,
@@ -46,7 +47,7 @@ export function startCountdown({
     Object.entries(COUNTDOWN_UNITS).map(([unit, selector]) => [unit, requireElement(root, selector)]),
   );
   const messageElement = requireElement(root, "[data-countdown-message]");
-  const parsedDeadline = parseUtcDeadline(deadline);
+  const parsedDeadline = providedParsedDeadline ?? parseUtcDeadline(deadline);
   let intervalId = null;
   let disposed = false;
   let visibilityListenerAdded = false;
@@ -137,7 +138,10 @@ function requireDocumentElement(documentRef, selector) {
   return element;
 }
 
-export function renderEventDetails(config, { documentRef = globalThis.document } = {}) {
+export function renderEventDetails(
+  config,
+  { documentRef = globalThis.document, parsedDeadline: providedParsedDeadline } = {},
+) {
   const titleElement = requireDocumentElement(documentRef, "[data-event-title]");
   const descriptionElement = requireDocumentElement(documentRef, "[data-event-description]");
   const startElement = requireDocumentElement(documentRef, "[data-event-start]");
@@ -153,7 +157,7 @@ export function renderEventDetails(config, { documentRef = globalThis.document }
   timeZoneElement.textContent = config.timeZoneLabel;
   documentRef.title = `${config.title} — Sự kiện mẫu`;
 
-  const parsedDeadline = parseUtcDeadline(config.startsAtUtc);
+  const parsedDeadline = providedParsedDeadline ?? parseUtcDeadline(config.startsAtUtc);
   if (parsedDeadline.ok) {
     const localDate = new Intl.DateTimeFormat("vi-VN", {
       timeZone: config.timeZone,

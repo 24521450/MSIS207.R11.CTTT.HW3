@@ -62,3 +62,10 @@ test("the landing page uses local assets and application code has no unsafe HTML
   const applicationSource = `${app}\n${eventUi}\n${registration}`;
   assert.doesNotMatch(applicationSource, /\.innerHTML\s*=|\.insertAdjacentHTML\s*\(/);
 });
+
+test("page startup parses the shared UTC deadline once for display and countdown", () => {
+  assert.equal((app.match(/parseUtcDeadline\(/g) ?? []).length, 1);
+  assert.match(app, /renderEventDetails\(eventConfig, \{ parsedDeadline \}\)/);
+  assert.match(app, /deadline: eventConfig\.startsAtUtc,\s*parsedDeadline/s);
+  assert.match(eventUi, /providedParsedDeadline \?\? parseUtcDeadline/);
+});
