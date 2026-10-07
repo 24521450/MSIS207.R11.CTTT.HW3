@@ -6,6 +6,7 @@ import { parseUtcDeadline } from "../countdown.mjs";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const styles = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+const favicon = readFileSync(new URL("../favicon.svg", import.meta.url), "utf8");
 const app = readFileSync(new URL("../app.mjs", import.meta.url), "utf8");
 const eventUi = readFileSync(new URL("../event-ui.mjs", import.meta.url), "utf8");
 const registration = readFileSync(new URL("../registration.mjs", import.meta.url), "utf8");
@@ -59,6 +60,8 @@ test("the page has semantic Vietnamese structure and visible required controls",
 
 test("the landing page uses local assets and application code has no unsafe HTML sink", () => {
   assert.match(html, /href="\.\/styles\.css"/);
+  assert.match(html, /rel="icon" href="\.\/favicon\.svg"/);
+  assert.match(favicon, /<svg\b/);
   assert.match(html, /type="module" src="\.\/app\.mjs"/);
   assert.match(styles, /@media \(max-width: 26rem\)/);
   const applicationSource = `${app}\n${eventUi}\n${registration}`;
