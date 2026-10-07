@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'"
+    />
+    <meta
+      name="description"
+      content="Đăng ký tham dự UIT Data & Web Meetup — sự kiện mẫu về dữ liệu và phát triển web."
+    />
+    <meta name="theme-color" content="#f4f7f5" />
+    <title>UIT Data &amp; Web Meetup — Sự kiện mẫu</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.mjs"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Bỏ qua đến nội dung chính</a>
+
+    <header class="site-header" id="top">
+      <a class="brand" href="#top" aria-label="UIT Meetup — về đầu trang">
+        <span class="brand-mark" aria-hidden="true">U</span>
+        <span>UIT <span class="brand-light">MEETUP</span></span>
+      </a>
+      <nav aria-label="Điều hướng chính">
+        <ul class="nav-list">
+          <li><a href="#about">Sự kiện</a></li>
+          <li><a href="#agenda">Chương trình</a></li>
+          <li><a class="nav-cta" href="#register">Đăng ký</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="about" aria-labelledby="event-title">
+        <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> CỘNG ĐỒNG CÔNG NGHỆ UIT</p>
+        <h1 id="event-title" data-event-title>UIT Data &amp; Web Meetup</h1>
+        <p class="hero-copy" data-event-description>
+          Một buổi gặp gỡ chia sẻ ý tưởng về dữ liệu và phát triển web dành cho cộng đồng sinh viên UIT.
+        </p>
+        <p class="sample-label">SỰ KIỆN MINH HỌA · Hãy thay thông tin mẫu trước khi sử dụng</p>
+
+        <section class="countdown-panel" aria-labelledby="countdown-title">
+          <header class="countdown-header">
+            <p class="eyebrow">ĐẾM NGƯỢC ĐẾN NGÀY GẶP GỠ</p>
+            <h2 id="countdown-title">Chúng ta sẽ gặp nhau sau</h2>
+          </header>
+          <ol class="countdown" aria-label="Thời gian còn lại đến sự kiện">
+            <li><strong data-countdown-days>--</strong><span>Ngày</span></li>
+            <li><strong data-countdown-hours>--</strong><span>Giờ</span></li>
+            <li><strong data-countdown-minutes>--</strong><span>Phút</span></li>
+            <li><strong data-countdown-seconds>--</strong><span>Giây</span></li>
+          </ol>
+          <p class="countdown-message" data-countdown-message role="status" aria-live="polite"></p>
+        </section>
+      </section>
+
+      <section class="event-details" aria-label="Thời gian và địa điểm">
+        <dl class="event-facts">
+          <dt><span class="fact-icon" aria-hidden="true">01</span> Thời gian</dt>
+          <dd>
+            <time data-event-start datetime="2026-12-20T02:00:00Z">09:00, Chủ Nhật, 20 tháng 12, 2026</time>
+            <span class="detail-note">Giờ Việt Nam (UTC+7)</span>
+          </dd>
+          <dt><span class="fact-icon" aria-hidden="true">02</span> Địa điểm</dt>
+          <dd>
+            <span data-event-venue>Hội trường E, Trường Đại học Công nghệ Thông tin</span>
+            <span class="detail-note" data-event-address>Khu phố 6, phường Linh Trung, TP. Thủ Đức — thông tin địa điểm mẫu.</span>
+          </dd>
+        </dl>
+      </section>
+
+      <section class="agenda-section" id="agenda" aria-labelledby="agenda-title">
+        <header class="section-heading">
+          <p class="eyebrow">CÙNG NHAU KHÁM PHÁ</p>
+          <h2 id="agenda-title">Chương trình dự kiến</h2>
+          <p>Những chủ đề gần gũi, thời gian để đặt câu hỏi và gặp gỡ mọi người.</p>
+        </header>
+        <ol class="agenda-list" data-event-agenda>
+          <li>
+            <time>09:00</time>
+            <article><h3>Chào mừng và kết nối</h3><p>Làm quen với cộng đồng dữ liệu và web tại UIT.</p></article>
+          </li>
+          <li>
+            <time>09:30</time>
+            <article><h3>Dữ liệu trong sản phẩm số</h3><p>Chia sẻ ngắn về cách dữ liệu hỗ trợ quyết định sản phẩm.</p></article>
+          </li>
+          <li>
+            <time>10:30</time>
+            <article><h3>Xây dựng trải nghiệm web bền vững</h3><p>Thảo luận về giao diện dễ dùng, dễ truy cập và dễ bảo trì.</p></article>
+          </li>
+          <li>
+            <time>11:15</time>
+            <article><h3>Hỏi đáp và giao lưu</h3><p>Trao đổi câu hỏi, ý tưởng và kinh nghiệm thực tế.</p></article>
+          </li>
+        </ol>
+      </section>
+
+      <section class="registration-section" id="register" aria-labelledby="register-title">
+        <header class="section-heading">
+          <p class="eyebrow">GIỮ CHỖ CỦA BẠN</p>
+          <h2 id="register-title">Đăng ký tham dự</h2>
+          <p>Điền thông tin để hoàn tất bản đăng ký minh họa.</p>
+        </header>
+        <form class="registration-form" id="registration-form" aria-busy="false">
+          <fieldset>
+            <legend>Thông tin người tham dự</legend>
+            <label for="full-name">Họ và tên <span aria-hidden="true">*</span></label>
+            <input
+              id="full-name"
+              name="name"
+              type="text"
+              autocomplete="name"
+              required
+              maxlength="120"
+              aria-describedby="name-hint"
+            />
+            <small id="name-hint">Nhập họ tên, không chỉ có khoảng trắng.</small>
+
+            <label for="email">Địa chỉ email <span aria-hidden="true">*</span></label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              maxlength="254"
+              aria-describedby="email-hint"
+            />
+            <small id="email-hint">Dùng địa chỉ email hợp lệ để điền thông tin mẫu.</small>
+
+            <label for="message">Lời nhắn <span class="optional-label">(không bắt buộc)</span></label>
+            <textarea id="message" name="message" rows="4" maxlength="500"></textarea>
+
+            <button class="submit-button" type="submit" id="submit-button">
+              <span data-submit-label>Gửi đăng ký</span>
+              <span class="button-arrow" aria-hidden="true">→</span>
+            </button>
+            <p class="form-status" id="registration-status" role="status" aria-live="polite"></p>
+            <p class="privacy-note">Bản mô phỏng: thông tin không được gửi đến máy chủ và không được lưu lại.</p>
+          </fieldset>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand" href="#top" aria-label="UIT Meetup — về đầu trang">
+        <span class="brand-mark" aria-hidden="true">U</span>
+        <span>UIT <span class="brand-light">MEETUP</span></span>
+      </a>
+      <p>Nội dung, địa điểm và chương trình trên trang là thông tin minh họa.</p>
+      <a href="#top">Về đầu trang ↑</a>
+    </footer>
+
+    <noscript><p class="noscript-note">Trang cần JavaScript để cập nhật đồng hồ đếm ngược và xử lý biểu mẫu minh họa.</p></noscript>
+  </body>
+</html>
