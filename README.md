@@ -75,4 +75,4 @@ Kiểm tra cuối được chạy qua HTTP local bằng Python 3.12.10 và Codex
 
 ## Git
 
-Repo local trên nhánh `main`, không có remote và chưa push. `TASK_DECOMPOSITION.md` và `project-rules.md` được tạo trước khi viết mã; mỗi task được kiểm tra và commit riêng.
+Repo sử dụng nhánh `main` và có remote `origin` trỏ tới `https://github.com/24521450/MSIS207.R11.CTTT.HW3.git`. Mỗi task có commit riêng; xem lịch sử Git để theo dõi quá trình triển khai.
