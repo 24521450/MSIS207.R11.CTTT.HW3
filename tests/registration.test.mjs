@@ -109,3 +109,61 @@ test("the simulated service waits 800ms and resolves without transmitting the pa
   assert.deepEqual(await resultPromise, { accepted: true });
   assert.equal(settled, true);
 });
+
+test("repeated submissions while pending call the service once and release the form on success", async () => {
+  const environment = makeFormEnvironment();
+  let calls = 0;
+  let finishRequest;
+  const controller = environment.controller(() => {
+    calls += 1;
+    return new Promise((resolve) => {
+      finishRequest = resolve;
+    });
+  });
+
+  const first = environment.form.submit();
+  const repeated = environment.form.submit();
+
+  assert.equal(first.defaultPrevented, true);
+  assert.equal(repeated.defaultPrevented, true);
+  assert.equal(calls, 1);
+  assert.equal(controller.getState(), "submitting");
+  assert.equal(environment.attributes.get("aria-busy"), "true");
+  assert.equal(environment.submitButton.disabled, true);
+
+  await repeated.result;
+  finishRequest({ accepted: true });
+  await first.result;
+
+  assert.equal(controller.getState(), "success");
+  assert.equal(environment.form.resetCount, 1);
+  assert.equal(environment.attributes.get("aria-busy"), "false");
+  assert.equal(environment.submitButton.disabled, false);
+});
+
+test("a rejected request retains form data, returns to error, and allows a successful retry", async () => {
+  const environment = makeFormEnvironment();
+  const receivedPayloads = [];
+  let calls = 0;
+  const controller = environment.controller((payload) => {
+    calls += 1;
+    receivedPayloads.push(payload);
+    if (calls === 1) return Promise.reject(new Error("temporary simulation failure"));
+    return Promise.resolve({ accepted: true });
+  });
+
+  const failedAttempt = environment.form.submit();
+  await assert.doesNotReject(failedAttempt.result);
+  assert.equal(controller.getState(), "error");
+  assert.match(environment.status.textContent, /thử lại/);
+  assert.equal(environment.form.resetCount, 0);
+  assert.equal(environment.attributes.get("aria-busy"), "false");
+  assert.equal(environment.submitButton.disabled, false);
+
+  const retry = environment.form.submit();
+  await retry.result;
+  assert.equal(controller.getState(), "success");
+  assert.equal(calls, 2);
+  assert.deepEqual(receivedPayloads, [environment.payload, environment.payload]);
+  assert.equal(environment.form.resetCount, 1);
+});
